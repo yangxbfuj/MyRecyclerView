@@ -1,8 +1,6 @@
 package com.example.yangxb.myrecyclerview;
 
 import android.content.Context;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
@@ -11,9 +9,6 @@ import android.widget.LinearLayout;
  * Created by yangxb on 16/8/7.
  */
 public class RecyclerGoupLayout extends LinearLayout {
-
-    //是否拦截了滚动事件
-    private boolean isIntercepted = false;
 
     //是否是全屏显示
     private boolean isFullScreen = false;
@@ -26,9 +21,6 @@ public class RecyclerGoupLayout extends LinearLayout {
 
     //处理滚动的阀值
     public static float GATE_VALUE = 100;
-
-    //当前监听的list
-    private RecyclerView mList;
 
     private boolean isListTop = true;
 
@@ -110,16 +102,24 @@ public class RecyclerGoupLayout extends LinearLayout {
         this.mScrollListener = mScrollListener;
     }
 
-    public void setFillScreen(boolean isFull){
+    public void setFillScreen(boolean isFull,int blankHeight){
         isFullScreen = isFull;
+        if (!isFullScreen)
+            scrollToFull();
+        else
+            scrollToHalf(blankHeight);
     }
 
-    public void setIntercepted(boolean intercepted) {
-        isIntercepted = intercepted;
+    public void scrollToFull(){
+        this.setScrollY(0);
+    }
+
+    public void scrollToHalf(int blankHeight){
+        this.setScrollY(blankHeight);
     }
 
     /**
-     *
+     * 是否拦截当前事件
      * @param diff 小于0 为向上移动
      * @return
      */
@@ -138,32 +138,23 @@ public class RecyclerGoupLayout extends LinearLayout {
         return isIntercepted;
     }
 
-    public void setmList( RecyclerView mList) {
-        this.mList = mList;
-        mList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                // 如果控件滑动到顶
-                if(manager.findFirstCompletelyVisibleItemPosition() == 0){
-                    isListTop = true;
-                }else {
-                    isListTop = false;
-                }
-            }
-        });
+    /**
+     * 设置当前List是不是已经拉到了最顶端
+     * @param isListTop
+     */
+    public void setListIsTop(boolean isListTop){
+        this.isListTop = isListTop;
     }
 
+    public boolean isFullScreen(){
+        return isFullScreen;
+    }
 
     public interface ScrollListener{
-        public void scrollUpToTop();
-        public void scrollDownToBottom();
-        public void scrollBack();
+         void scrollUpToTop();
+         void scrollDownToBottom();
+         void scrollBack();
     }
+
+
 }

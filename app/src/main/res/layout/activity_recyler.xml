@@ -5,7 +5,7 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="vertical"
-              tools:context="com.example.yangxb.myrecyclerview.ui.RecylerActivity">
+              tools:context=".ui.RecyclerActivity">
 
     <View
         android:id="@+id/my_recycler_blank"

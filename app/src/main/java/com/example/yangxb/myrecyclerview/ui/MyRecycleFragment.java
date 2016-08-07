@@ -20,20 +20,16 @@ import com.example.yangxb.myrecyclerview.R;
  */
 public class MyRecycleFragment extends Fragment {
 
-    private int mItemViewLayoutRes;
-
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    private static final String TAG = "MyRecycleFragment";
+    private int mItemViewLayoutRes;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
     private OnFragmentInteractionListener mListener;
-
-    private static final String TAG = "MyRecycleFragment";
 
     public MyRecycleFragment() {
         // Required empty public constructor
