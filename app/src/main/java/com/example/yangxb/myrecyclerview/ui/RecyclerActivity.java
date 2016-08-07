@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
@@ -32,9 +33,12 @@ public class RecyclerActivity extends AppCompatActivity {
     private RecyclerView.OnScrollListener mOnScrollListener;
 
     private static final String SCREEN_STATUS = "screen_orientation";
+    private static final String LIST_POSITION = "list_position";
 
     //如果这个activity是屏幕方向变化重新创建的activity
-    boolean isFullScreen = false;
+    private boolean isFullScreen = false;
+    private int mListPosition = 0;
+    private MyAdapter mMyAdapter;
 
     private RecyclerGoupLayout.ScrollListener mFullScreenScrollListener = new RecyclerGoupLayout
             .ScrollListener() {
@@ -78,8 +82,10 @@ public class RecyclerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState!=null)
-        isFullScreen  =  savedInstanceState.getBoolean(SCREEN_STATUS,false);
+        if(savedInstanceState!=null){
+            isFullScreen  =  savedInstanceState.getBoolean(SCREEN_STATUS,false);
+            mListPosition =  savedInstanceState.getInt(LIST_POSITION,0);
+        }
         initView();
     }
 
@@ -94,7 +100,14 @@ public class RecyclerActivity extends AppCompatActivity {
         //initList
         mLinearLayoutManager = new LinearLayoutManager(this);
         mList.setLayoutManager(mLinearLayoutManager);
-        mList.setAdapter(new MyAdapter());
+        mMyAdapter = new MyAdapter();
+        mMyAdapter.setOnDataChangedListener(new OnDataChangedListener() {
+            @Override
+            public void onDataChanged() {
+                relayoutBlankView();
+            }
+        });
+        mList.setAdapter(mMyAdapter);
         mOnScrollListener = new RecyclerView.OnScrollListener() {
 
                 @Override
@@ -117,6 +130,7 @@ public class RecyclerActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putBoolean(SCREEN_STATUS,mViewGroup.isFullScreen());
+        outState.putInt(LIST_POSITION,mLinearLayoutManager.findFirstVisibleItemPosition());
         super.onSaveInstanceState(outState);
     }
 
@@ -142,6 +156,7 @@ public class RecyclerActivity extends AppCompatActivity {
     public void initScreenStatus(){
         mViewGroup.setScrollListener(mHalfScreenScrollListener);
         mViewGroup.setFillScreen(isFullScreen,mBlankHeight);
+        mLinearLayoutManager.scrollToPosition(mListPosition);
     }
 
     /**
@@ -197,6 +212,43 @@ public class RecyclerActivity extends AppCompatActivity {
         mList.getLayoutParams().height = mContentHeight - mToolbarHeight;
 
         hasMeasured = true;
+    }
+
+    /**
+     * 应该在ListItem的增加和修改时调用
+     */
+    private void relayoutBlankView(){
+
+        //创建新值，用于匹配
+        int newValue = mBlankHeight;
+        //根据List中的Item数量计算List应该多高
+        int listChildCount = mList.getChildCount();
+
+        //如果List没有Item，那么空白View应该占满全屏
+        if (listChildCount <= 0) {
+            //高度就是内容高度 ＝ 显示屏幕高度 － 状态栏高度
+            newValue = mContentHeight;
+        } else if (listChildCount == 1) {
+            //空白高度 ＝ 内容高度－toolbar高度－1个Item的高度
+            newValue = mContentHeight - mToolbarHeight - mItemHeight;
+        } else {  //当Item数量大于2时，空白高度 ＝ 内容高度－toolbar高度－2个Item的高度
+            newValue = mContentHeight - mToolbarHeight - mItemHeight * 2;
+        }
+
+        //没有变化
+        if (newValue == mBlankHeight)
+            return;
+
+        if(newValue > mBlankHeight){ //新值大于旧值
+            //TODO 设置增高动画
+
+        }else if(newValue < mBlankHeight){
+            //TODO 设置减小动画
+        }
+        mBlankHeight = newValue;
+        //设置空白区域的高度
+        mBlank.getLayoutParams().height = mBlankHeight;
+
     }
 
 }
