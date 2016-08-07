@@ -1,0 +1,30 @@
+<com.example.yangxb.myrecyclerview.RecyclerGoupLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/my_recycler_group"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              tools:context="com.example.yangxb.myrecyclerview.ui.RecylerActivity">
+
+    <View
+        android:id="@+id/my_recycler_blank"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        />
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_recycler_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@android:color/holo_red_dark">
+
+    </android.support.v7.widget.Toolbar>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/my_recycler_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v7.widget.RecyclerView>
+
+</com.example.yangxb.myrecyclerview.RecyclerGoupLayout>
